@@ -1,4 +1,4 @@
-~~~{"variant":"standard","title":"Journey App Full CI/CD with SSH","id":"39221"}
+~~~{"variant":"standard","title":"Journey App CI/CD Full Workflow","id":"39222"}
 name: Journey App CI/CD
 
 on:
@@ -38,7 +38,7 @@ jobs:
       - name: Push frontend image
         run: docker push abhilasha360/journey-frontend:latest
 
-      # 7️⃣ Test SSH connectivity (optional but recommended)
+      # 7️⃣ Test SSH connectivity
       - name: Test SSH Connection
         uses: appleboy/ssh-action@v0.1.7
         with:
@@ -53,12 +53,12 @@ jobs:
       - name: Deploy to Server
         uses: appleboy/ssh-action@v0.1.7
         with:
-          host: ${{ secrets.SERVER_IP }}          # Your server IP
+          host: ${{ secrets.SERVER_IP }}          # Server IP
           username: ${{ secrets.SERVER_USER }}    # SSH user
-          key: ${{ secrets.SERVER_SSH_KEY }}      # Private key content from GitHub Secrets
+          key: ${{ secrets.SERVER_SSH_KEY }}      # Private key from GitHub Secrets
           port: 22
           script: |
-            cd /home/ubuntu/journey-app          # Replace with your deployment folder
+            cd /home/ubuntu/journey-app          # Replace with deployment folder
             docker-compose down
             docker-compose pull
             docker-compose up -d
