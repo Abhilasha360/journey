@@ -1,23 +1,32 @@
 pipeline {
     agent any
 
+    environment {
+        DOCKER_COMPOSE_FILE = 'docker-compose.yml'
+    }
+
     stages {
         stage('Clone Repo') {
             steps {
-                git branch: 'main',
-                    url: 'https://github.com/Abhilasha360/journey.git'
+                git branch: 'main', url: 'https://github.com/Abhilasha360/journey.git'
             }
         }
 
         stage('Build Docker Images') {
             steps {
-                bat 'docker-compose build'
+                bat "docker-compose -f %DOCKER_COMPOSE_FILE% build"
+            }
+        }
+
+        stage('Stop Existing Containers') {
+            steps {
+                bat "docker-compose -f %DOCKER_COMPOSE_FILE% down"
             }
         }
 
         stage('Run Containers') {
             steps {
-                bat 'docker-compose up -d'
+                bat "docker-compose -f %DOCKER_COMPOSE_FILE% up -d"
             }
         }
     }
