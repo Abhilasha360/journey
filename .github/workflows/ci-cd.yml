@@ -1,6 +1,5 @@
 name: Journey App CI/CD
 
-# Trigger the workflow on push to main branch
 on:
   push:
     branches:
@@ -11,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1️⃣ Checkout the repository
+      # 1️⃣ Checkout repository
       - name: Checkout repository
         uses: actions/checkout@v3
 
@@ -38,16 +37,16 @@ jobs:
       - name: Push frontend image
         run: docker push abhilasha360/journey-frontend:latest
 
-      # 7️⃣ Deploy to server via SSH (optional)
+      # 7️⃣ Deploy via SSH (Optional)
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v0.1.7
         with:
-          host: ${{ secrets.SERVER_IP }}          # Your server public IP
-          username: ${{ secrets.SERVER_USER }}    # Server username (e.g., ubuntu)
-          key: ${{ secrets.SERVER_SSH_KEY }}      # Your private SSH key (saved as GitHub secret)
+          host: ${{ secrets.SERVER_IP }}         # Server public IP
+          username: ${{ secrets.SERVER_USER }}   # Server username (e.g., ubuntu)
+          key: ${{ secrets.SERVER_SSH_KEY }}     # Private SSH key stored as secret
           port: 22
           script: |
-            cd /path/to/deployment                  # Folder on server with docker-compose.yml
+            cd /path/to/deployment              # Folder with docker-compose.yml
             docker-compose down
             docker-compose pull
             docker-compose up -d
