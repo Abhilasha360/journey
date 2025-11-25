@@ -8,8 +8,6 @@ branches:
 jobs:
 build-and-push:
 runs-on: ubuntu-latest
-
-```
 steps:
   # 1️⃣ Checkout the repository
   - name: Checkout repository
@@ -37,4 +35,4 @@ steps:
   # 6️⃣ Push frontend Docker image
   - name: Push frontend Docker image
     run: docker push abhilasha360/journey-frontend:latest
-```
+
