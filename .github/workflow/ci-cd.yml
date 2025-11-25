@@ -1,4 +1,4 @@
-~~~{"variant":"standard","title":"Journey App GitHub Actions Workflow with SSH","id":"39216"}
+~~~{"variant":"standard","title":"Journey App CI/CD Ready-to-Use","id":"39218"}
 name: Journey App CI/CD
 
 on:
@@ -15,8 +15,8 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # 2️⃣ Log in to Docker Hub
-      - name: Docker Hub Login
+      # 2️⃣ Docker Hub login
+      - name: Log in to Docker Hub
         uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
@@ -30,11 +30,11 @@ jobs:
       - name: Build frontend image
         run: docker build -t abhilasha360/journey-frontend:latest ./frontend
 
-      # 5️⃣ Push backend image
+      # 5️⃣ Push backend Docker image
       - name: Push backend image
         run: docker push abhilasha360/journey-backend:latest
 
-      # 6️⃣ Push frontend image
+      # 6️⃣ Push frontend Docker image
       - name: Push frontend image
         run: docker push abhilasha360/journey-frontend:latest
 
@@ -42,11 +42,12 @@ jobs:
       - name: Deploy to Server
         uses: appleboy/ssh-action@v0.1.7
         with:
-          host: ${{ secrets.SERVER_IP }}
-          username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SERVER_SSH_KEY }}
+          host: ${{ secrets.SERVER_IP }}          # Your server IP
+          username: ${{ secrets.SERVER_USER }}    # SSH user
+          key: ${{ secrets.SERVER_SSH_KEY }}      # Private SSH key
+          port: 22                                # SSH port
           script: |
-            cd /path/to/deployment
+            cd /home/ubuntu/journey-app          # Replace with your deployment path
             docker-compose down
             docker-compose pull
             docker-compose up -d
