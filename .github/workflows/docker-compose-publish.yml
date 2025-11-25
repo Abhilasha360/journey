@@ -11,30 +11,51 @@ runs-on: ubuntu-latest
 
 ```
 steps:  
+  # 1. Checkout repository
   - name: Checkout code
     uses: actions/checkout@v3
 
+  # 2. Set up Docker Buildx
   - name: Set up Docker Buildx
     uses: docker/setup-buildx-action@v3
 
+  # 3. Log in to Docker Hub
   - name: Log in to Docker Hub
     uses: docker/login-action@v2
     with:
       username: ${{ secrets.DOCKERHUB_USERNAME }}
       password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+  # 4. Get short SHA of the commit
+  - name: Get commit SHA
+    id: vars
+    run: echo "SHA=$(echo $GITHUB_SHA | cut -c1-7)" >> $GITHUB_ENV
+
+  # 5. Build Docker images
   - name: Build images
-    run: docker-compose build
+    run: docker compose build
 
+  # 6. Tag backend image with latest and SHA
   - name: Tag backend image
-    run: docker tag journey-app-cicd-backend:latest ${{ secrets.DOCKERHUB_USERNAME }}/journey-app-cicd-backend:latest
+    run: |
+      docker tag journey-app-cicd-backend:latest ${{ secrets.DOCKERHUB_USERNAME }}/journey-app-cicd-backend:latest
+      docker tag journey-app-cicd-backend:latest ${{ secrets.DOCKERHUB_USERNAME }}/journey-app-cicd-backend:${{ env.SHA }}
 
+  # 7. Tag frontend image with latest and SHA
   - name: Tag frontend image
-    run: docker tag journey-app-cicd-frontend:latest ${{ secrets.DOCKERHUB_USERNAME }}/journey-app-cicd-frontend:latest
+    run: |
+      docker tag journey-app-cicd-frontend:latest ${{ secrets.DOCKERHUB_USERNAME }}/journey-app-cicd-frontend:latest
+      docker tag journey-app-cicd-frontend:latest ${{ secrets.DOCKERHUB_USERNAME }}/journey-app-cicd-frontend:${{ env.SHA }}
 
+  # 8. Push backend images
   - name: Push backend image
-    run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/journey-app-cicd-backend:latest
+    run: |
+      docker push ${{ secrets.DOCKERHUB_USERNAME }}/journey-app-cicd-backend:latest
+      docker push ${{ secrets.DOCKERHUB_USERNAME }}/journey-app-cicd-backend:${{ env.SHA }}
 
+  # 9. Push frontend images
   - name: Push frontend image
-    run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/journey-app-cicd-frontend:latest
+    run: |
+      docker push ${{ secrets.DOCKERHUB_USERNAME }}/journey-app-cicd-frontend:latest
+      docker push ${{ secrets.DOCKERHUB_USERNAME }}/journey-app-cicd-frontend:${{ env.SHA }}
 ```
