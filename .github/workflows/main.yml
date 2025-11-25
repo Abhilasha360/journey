@@ -1,26 +1,25 @@
-name: CI Workflow       # Optional but recommended
+name: Journey App CI/CD
 
-# Events that trigger the workflow
 on:
   push:
     branches: [ main ]
-  pull_request:
-    branches: [ main ]
-  workflow_dispatch:    # Allows manual trigger
+  workflow_dispatch:
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-      - name: Set up Docker
+      - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
       - name: Build Docker images
-        run: docker-compose build
+        run: docker compose build
 
-      - name: Run Docker containers
-        run: docker-compose up -d
+      - name: Run containers
+        run: docker compose up -d
+
+      - name: List running containers
+        run: docker ps
