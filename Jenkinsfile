@@ -33,10 +33,10 @@ pipeline {
 
     post {
         success {
-            echo "Journey App successfully deployed using Jenkins + Docker (Windows)!"
+            slackSend(channel: '#social', message: "✅ SUCCESS: Journey App deployed! Job: ${env.JOB_NAME} | Build: #${env.BUILD_NUMBER}")
         }
         failure {
-            echo "Deployment failed!"
+            slackSend(channel: '#social', message: "❌ FAILED: Deployment failed! Job: ${env.JOB_NAME} | Build: #${env.BUILD_NUMBER}")
         }
     }
 }
